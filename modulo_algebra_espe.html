@@ -229,7 +229,7 @@ function lod(u,s){
   document.getElementById('tt').textContent=TOPS[u+'-'+s]||'Tema';
   document.getElementById('ts').textContent='Unidad: '+(UNITS[u]?UNITS[u].label:u);
   document.getElementById('ti').textContent=UNITS[u]?UNITS[u].icon:'📚';
-  setTab('teoria');clearC();loadTab();
+  setTab('teoria');clearC();
 }
 
 function banco(u){
@@ -242,7 +242,7 @@ function banco(u){
   clearC();callAI(buildBanco(u));
 }
 
-function tab(t){ct=t;setTab(t);clearC();loadTab();}
+function tab(t){ct=t;setTab(t);clearC();}
 
 function setTab(t){
   ['teoria','ejemplos','errores','estrategia','ejercicios','examen'].forEach(function(id){
