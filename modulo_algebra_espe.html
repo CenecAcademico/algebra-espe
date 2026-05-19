@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo de Álgebra – ESPE | Ciencias Económicas y Administrativas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --verde: #0d6e4d;
+    --verde-claro: #17a373;
+    --verde-neon: #1ddf8a;
+    --dorado: #c9a84c;
+    --dorado-claro: #f0c96e;
+    --fondo: #0a0f0d;
+    --fondo2: #0f1a14;
+    --fondo3: #152019;
+    --tarjeta: #111c15;
+    --borde: #1e3324;
+    --texto: #e8f5ee;
+    --texto2: #8ab89a;
+    --rojo: #e05252;
+    --azul: #4d9de0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: 'Source Sans 3', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── HEADER ─────────────────────────────────────────── */
+  header {
+    background: linear-gradient(135deg, #061009 0%, #0d2518 50%, #071410 100%);
+    border-bottom: 2px solid var(--verde);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg, transparent, transparent 40px,
+      rgba(13,110,77,0.04) 40px, rgba(13,110,77,0.04) 41px
+    );
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+  .escudo {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--verde), var(--dorado));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 30px rgba(13,110,77,0.5);
+  }
+  .header-txt h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 900;
+    color: var(--dorado-claro);
+    line-height: 1.1;
+  }
+  .header-txt p {
+    color: var(--verde-neon);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+    font-weight: 600;
+  }
+  .badge-area { margin-top: 0.6rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .badge {
+    background: rgba(13,110,77,0.2);
+    border: 1px solid var(--verde);
+    color: var(--verde-neon);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+
+  /* ─── LAYOUT ──────────────────────────────────────────── */
+  .app { display: flex; min-height: calc(100vh - 160px); }
+
+  /* ─── SIDEBAR ─────────────────────────────────────────── */
+  .sidebar {
+    width: 290px;
+    flex-shrink: 0;
+    background: var(--fondo2);
+    border-right: 1px solid var(--borde);
+    padding: 1.5rem 0;
+    overflow-y: auto;
+    max-height: calc(100vh - 160px);
+    position: sticky;
+    top: 0;
+  }
+  .sidebar-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--texto2);
+    padding: 0 1.2rem;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+  }
+  .nav-unit {
+    margin-bottom: 0.3rem;
+  }
+  .nav-unit-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.7rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--texto2);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: left;
+    transition: all 0.2s;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .nav-unit-btn:hover { color: var(--verde-neon); background: rgba(13,110,77,0.1); }
+  .nav-unit-btn.active { color: var(--dorado-claro); background: rgba(201,168,76,0.08); }
+  .nav-unit-btn .ico { font-size: 1.1rem; flex-shrink: 0; }
+  .nav-sub {
+    display: none;
+    padding: 0.2rem 0 0.2rem 2.8rem;
+  }
+  .nav-sub.open { display: block; }
+  .nav-sub-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.45rem 0.8rem;
+    color: var(--texto2);
+    font-size: 0.78rem;
+    text-align: left;
+    transition: all 0.2s;
+    font-family: 'Source Sans 3', sans-serif;
+    border-left: 2px solid transparent;
+  }
+  .nav-sub-btn:hover { color: var(--verde-neon); border-left-color: var(--verde); }
+  .nav-sub-btn.active { color: var(--verde-neon); border-left-color: var(--verde-neon); font-weight: 600; }
+
+  /* ─── MAIN CONTENT ────────────────────────────────────── */
+  .main {
+    flex: 1;
+    padding: 2rem;
+    max-width: 820px;
+    min-width: 0;
+  }
+
+  /* ─── WELCOME ─────────────────────────────────────────── */
+  .welcome {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  .welcome h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--dorado-claro);
+    margin-bottom: 1rem;
+  }
+  .welcome p { color: var(--texto2); font-size: 1.05rem; max-width: 500px; margin: 0 auto 2rem; line-height: 1.7; }
+  .units-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem; }
+  .unit-card {
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 1.4rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: left;
+  }
+  .unit-card:hover { border-color: var(--verde); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(13,110,77,0.2); }
+  .unit-card .num { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--verde); font-weight: 900; }
+  .unit-card h3 { font-size: 0.85rem; color: var(--dorado-claro); margin-top: 0.3rem; font-weight: 700; }
+  .unit-card p { font-size: 0.75rem; color: var(--texto2); margin-top: 0.3rem; }
+
+  /* ─── TOPIC VIEW ──────────────────────────────────────── */
+  .topic-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .topic-icon {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--verde), var(--verde-claro));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .topic-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--dorado-claro);
+    line-height: 1.2;
+  }
+  .topic-header .sub { color: var(--texto2); font-size: 0.85rem; margin-top: 0.2rem; }
+
+  /* ─── TABS ────────────────────────────────────────────── */
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab-btn {
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    color: var(--texto2);
+    padding: 0.5rem 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .tab-btn:hover { border-color: var(--verde); color: var(--verde-neon); }
+  .tab-btn.active { background: var(--verde); border-color: var(--verde); color: #fff; }
+
+  /* ─── AI RESPONSE AREA ────────────────────────────────── */
+  .ai-area {
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    min-height: 300px;
+    padding: 1.5rem;
+    position: relative;
+  }
+  .ai-area.loading { opacity: 0.7; }
+
+  .loading-bar {
+    display: none;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--verde-neon);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  .loading-bar.show { display: flex; }
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(29,223,138,0.2);
+    border-top-color: var(--verde-neon);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ─── RENDERED CONTENT ────────────────────────────────── */
+  .ai-content {
+    line-height: 1.75;
+    font-size: 0.95rem;
+    color: var(--texto);
+  }
+  .ai-content h1, .ai-content h2, .ai-content h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--dorado-claro);
+    margin: 1.4rem 0 0.6rem;
+  }
+  .ai-content h1 { font-size: 1.5rem; }
+  .ai-content h2 { font-size: 1.2rem; }
+  .ai-content h3 { font-size: 1rem; color: var(--verde-neon); }
+  .ai-content p { margin-bottom: 0.7rem; }
+  .ai-content ul, .ai-content ol { padding-left: 1.4rem; margin-bottom: 0.7rem; }
+  .ai-content li { margin-bottom: 0.25rem; }
+  .ai-content strong { color: var(--verde-neon); }
+  .ai-content em { color: var(--dorado-claro); }
+  .ai-content code {
+    background: rgba(29,223,138,0.08);
+    border: 1px solid rgba(29,223,138,0.2);
+    color: var(--verde-neon);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.87em;
+  }
+  .ai-content pre {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--borde);
+    border-left: 3px solid var(--verde);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 0.8rem 0;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--verde-neon);
+  }
+  .ai-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+  }
+  .ai-content th {
+    background: rgba(13,110,77,0.3);
+    border: 1px solid var(--borde);
+    padding: 0.6rem 0.8rem;
+    color: var(--dorado-claro);
+    text-align: left;
+    font-weight: 700;
+  }
+  .ai-content td {
+    border: 1px solid var(--borde);
+    padding: 0.55rem 0.8rem;
+    color: var(--texto2);
+  }
+  .ai-content tr:nth-child(even) td { background: rgba(13,110,77,0.05); }
+
+  /* Callout boxes */
+  .box-recuerda, .box-error, .box-estrategia {
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    border-left: 4px solid;
+    font-size: 0.9rem;
+  }
+  .box-recuerda { background: rgba(77,157,224,0.08); border-color: var(--azul); }
+  .box-recuerda::before { content: '💡 Recuerda: '; font-weight: 700; color: var(--azul); }
+  .box-error { background: rgba(224,82,82,0.08); border-color: var(--rojo); }
+  .box-error::before { content: '⚠️ Error Común: '; font-weight: 700; color: var(--rojo); }
+  .box-estrategia { background: rgba(201,168,76,0.08); border-color: var(--dorado); }
+  .box-estrategia::before { content: '🎯 Estrategia de Examen: '; font-weight: 700; color: var(--dorado-claro); }
+
+  /* Correct answer highlight */
+  .correct { color: #1ddf8a; font-weight: 700; }
+  .ai-content .checkmark { color: #1ddf8a; }
+
+  /* ─── ACTION BUTTONS ──────────────────────────────────── */
+  .action-bar {
+    display: flex;
+    gap: 0.7rem;
+    margin-top: 1.2rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 700;
+    transition: all 0.2s;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .btn-primary { background: var(--verde); color: #fff; }
+  .btn-primary:hover { background: var(--verde-claro); transform: translateY(-1px); }
+  .btn-secondary { background: transparent; border: 1px solid var(--borde); color: var(--texto2); }
+  .btn-secondary:hover { border-color: var(--verde); color: var(--verde-neon); }
+  .btn-gold { background: var(--dorado); color: #000; }
+  .btn-gold:hover { background: var(--dorado-claro); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ─── CUSTOM QUESTION ─────────────────────────────────── */
+  .custom-q {
+    display: flex;
+    gap: 0.7rem;
+    margin-top: 1.2rem;
+    align-items: flex-end;
+  }
+  .custom-q textarea {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    color: var(--texto);
+    font-size: 0.88rem;
+    font-family: 'Source Sans 3', sans-serif;
+    resize: none;
+    min-height: 60px;
+    transition: border-color 0.2s;
+  }
+  .custom-q textarea:focus { outline: none; border-color: var(--verde); }
+  .custom-q textarea::placeholder { color: var(--texto2); }
+
+  /* ─── EMPTY / ERROR STATES ────────────────────────────── */
+  .state-msg {
+    text-align: center;
+    padding: 3rem;
+    color: var(--texto2);
+  }
+  .state-msg .icon { font-size: 3rem; margin-bottom: 1rem; }
+  .state-msg p { font-size: 0.9rem; }
+  .error-msg { color: var(--rojo); font-size: 0.85rem; margin-top: 0.5rem; }
+
+  /* ─── SCROLLBAR ───────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--fondo2); }
+  ::-webkit-scrollbar-thumb { background: var(--borde); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--verde); }
+
+  /* ─── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 700px) {
+    .app { flex-direction: column; }
+    .sidebar { width: 100%; max-height: none; position: static; border-right: none; border-bottom: 1px solid var(--borde); }
+    .main { padding: 1.2rem; }
+    .header-inner { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="escudo">🎓</div>
+    <div class="header-txt">
+      <h1>Módulo de Álgebra – ESPE</h1>
+      <p>Ciencias Económicas y Administrativas · Preuniversitario</p>
+      <div class="badge-area">
+        <span class="badge">Lógica</span>
+        <span class="badge">Conjuntos</span>
+        <span class="badge">Funciones</span>
+        <span class="badge">Trigonometría</span>
+        <span class="badge">Exp. &amp; Log.</span>
+        <span class="badge">IA Integrada</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-title">Contenidos</div>
+
+    <div class="nav-unit">
+      <button class="nav-unit-btn" onclick="toggleUnit(0)">
+        <span class="ico">🔣</span> 1. Lógica Matemática
+      </button>
+      <div class="nav-sub" id="sub-0">
+        <button class="nav-sub-btn" onclick="loadTopic('logica','proposiciones')">1.1 Proposiciones y conectivos</button>
+        <button class="nav-sub-btn" onclick="loadTopic('logica','tautologia')">1.2 Tautología y contingencia</button>
+        <button class="nav-sub-btn" onclick="loadTopic('logica','leyes')">1.3 Leyes del álgebra proposicional</button>
+        <button class="nav-sub-btn btn-gold" onclick="loadBanco('logica')">📋 Banco de Preguntas</button>
+      </div>
+    </div>
+
+    <div class="nav-unit">
+      <button class="nav-unit-btn" onclick="toggleUnit(1)">
+        <span class="ico">🔵</span> 2. Conjuntos
+      </button>
+      <div class="nav-sub" id="sub-1">
+        <button class="nav-sub-btn" onclick="loadTopic('conjuntos','definicion')">2.1 Definición y determinación</button>
+        <button class="nav-sub-btn" onclick="loadTopic('conjuntos','relaciones')">2.2 Relaciones entre conjuntos</button>
+        <button class="nav-sub-btn" onclick="loadTopic('conjuntos','operaciones')">2.3 Operaciones con conjuntos</button>
+        <button class="nav-sub-btn" onclick="loadBanco('conjuntos')">📋 Banco de Preguntas</button>
+      </div>
+    </div>
+
+    <div class="nav-unit">
+      <button class="nav-unit-btn" onclick="toggleUnit(2)">
+        <span class="ico">🔢</span> 3. Números Reales
+      </button>
+      <div class="nav-sub" id="sub-2">
+        <button class="nav-sub-btn" onclick="loadTopic('reales','axiomas')">3.1 Axiomas del cuerpo real</button>
+        <button class="nav-sub-btn" onclick="loadTopic('reales','sucesiones')">3.2 Sucesiones y progresiones</button>
+        <button class="nav-sub-btn" onclick="loadTopic('reales','intervalos')">3.3 Orden e intervalos</button>
+        <button class="nav-sub-btn" onclick="loadTopic('reales','valorabsoluto')">3.4 Valor absoluto</button>
+        <button class="nav-sub-btn" onclick="loadBanco('reales')">📋 Banco de Preguntas</button>
+      </div>
+    </div>
+
+    <div class="nav-unit">
+      <button class="nav-unit-btn" onclick="toggleUnit(3)">
+        <span class="ico">📈</span> 4. Funciones Algebraicas
+      </button>
+      <div class="nav-sub" id="sub-3">
+        <button class="nav-sub-btn" onclick="loadTopic('funciones','relacion')">4.1 Relación y función</button>
+        <button class="nav-sub-btn" onclick="loadTopic('funciones','biyectiva')">4.2 Función biyectiva e inversa</button>
+        <button class="nav-sub-btn" onclick="loadTopic('funciones','tipos')">4.3 Tipos de funciones</button>
+        <button class="nav-sub-btn" onclick="loadTopic('funciones','operaciones')">4.4 Operaciones con funciones</button>
+        <button class="nav-sub-btn" onclick="loadTopic('funciones','monotonia')">4.5 Monotonía</button>
+        <button class="nav-sub-btn" onclick="loadTopic('funciones','paridad')">4.6 Paridad</button>
+        <button class="nav-sub-btn" onclick="loadBanco('funciones')">📋 Banco de Preguntas</button>
+      </div>
+    </div>
+
+    <div class="nav-unit">
+      <button class="nav-unit-btn" onclick="toggleUnit(4)">
+        <span class="ico">📐</span> 5. Trigonometría
+      </button>
+      <div class="nav-sub" id="sub-4">
+        <button class="nav-sub-btn" onclick="loadTopic('trigo','angulos')">5.1 Ángulo y razones trig.</button>
+        <button class="nav-sub-btn" onclick="loadTopic('trigo','circulo')">5.2 Círculo trigonométrico</button>
+        <button class="nav-sub-btn" onclick="loadTopic('trigo','funciones')">5.3 Funciones trigonométricas</button>
+        <button class="nav-sub-btn" onclick="loadTopic('trigo','identidades')">5.4 Identidades trigonométricas</button>
+        <button class="nav-sub-btn" onclick="loadTopic('trigo','triangulos')">5.5 Resolución de triángulos</button>
+        <button class="nav-sub-btn" onclick="loadTopic('trigo','inversas')">5.6 Funciones inversas</button>
+        <button class="nav-sub-btn" onclick="loadTopic('trigo','ecuaciones')">5.7 Ecuaciones e inecuaciones</button>
+        <button class="nav-sub-btn" onclick="loadBanco('trigo')">📋 Banco de Preguntas</button>
+      </div>
+    </div>
+
+    <div class="nav-unit">
+      <button class="nav-unit-btn" onclick="toggleUnit(5)">
+        <span class="ico">📊</span> 6. Exp. y Logarítmica
+      </button>
+      <div class="nav-sub" id="sub-5">
+        <button class="nav-sub-btn" onclick="loadTopic('explog','definicion')">6.1 Definición y propiedades</button>
+        <button class="nav-sub-btn" onclick="loadTopic('explog','ecuaciones')">6.2 Ecuaciones e inecuaciones</button>
+        <button class="nav-sub-btn" onclick="loadBanco('explog')">📋 Banco de Preguntas</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="main-content">
+    <div class="welcome" id="welcome">
+      <h2>¡Bienvenida, Anabell! 🎓</h2>
+      <p>Este es tu módulo completo de Álgebra para el ingreso a la ESPE. Selecciona un tema en el menú izquierdo o empieza por una unidad:</p>
+      <div class="units-grid">
+        <div class="unit-card" onclick="toggleUnit(0);loadTopic('logica','proposiciones')">
+          <div class="num">01</div>
+          <h3>Lógica Matemática</h3>
+          <p>Proposiciones, tablas de verdad, leyes lógicas</p>
+        </div>
+        <div class="unit-card" onclick="toggleUnit(1);loadTopic('conjuntos','definicion')">
+          <div class="num">02</div>
+          <h3>Conjuntos</h3>
+          <p>Operaciones, diagramas de Venn, cardinalidad</p>
+        </div>
+        <div class="unit-card" onclick="toggleUnit(2);loadTopic('reales','axiomas')">
+          <div class="num">03</div>
+          <h3>Números Reales</h3>
+          <p>Axiomas, sucesiones, intervalos, valor absoluto</p>
+        </div>
+        <div class="unit-card" onclick="toggleUnit(3);loadTopic('funciones','relacion')">
+          <div class="num">04</div>
+          <h3>Funciones Algebraicas</h3>
+          <p>Tipos, operaciones, monotonía, paridad</p>
+        </div>
+        <div class="unit-card" onclick="toggleUnit(4);loadTopic('trigo','angulos')">
+          <div class="num">05</div>
+          <h3>Trigonometría</h3>
+          <p>Razones, identidades, resolución de triángulos</p>
+        </div>
+        <div class="unit-card" onclick="toggleUnit(5);loadTopic('explog','definicion')">
+          <div class="num">06</div>
+          <h3>Exp. y Logarítmica</h3>
+          <p>Propiedades, ecuaciones, inecuaciones</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="topic-view" style="display:none">
+      <div class="topic-header">
+        <div class="topic-icon" id="topic-icon">📚</div>
+        <div>
+          <h2 id="topic-title">Tema</h2>
+          <div class="sub" id="topic-sub">Módulo de Álgebra – ESPE</div>
+        </div>
+      </div>
+
+      <div class="tabs" id="tabs">
+        <button class="tab-btn active" onclick="switchTab('teoria')">📖 Teoría</button>
+        <button class="tab-btn" onclick="switchTab('ejemplos')">✏️ Ejemplos Resueltos</button>
+        <button class="tab-btn" onclick="switchTab('errores')">⚠️ Errores Comunes</button>
+        <button class="tab-btn" onclick="switchTab('estrategia')">🎯 Estrategia Examen</button>
+        <button class="tab-btn" onclick="switchTab('ejercicios')">📝 Ejercicios</button>
+        <button class="tab-btn" onclick="switchTab('examen')">🏆 Tipo Examen</button>
+      </div>
+
+      <div class="ai-area" id="ai-area">
+        <div class="loading-bar" id="loading-bar">
+          <div class="spinner"></div>
+          <span id="loading-msg">Generando contenido académico...</span>
+        </div>
+        <div class="ai-content" id="ai-content">
+          <div class="state-msg">
+            <div class="icon">🤖</div>
+            <p>Selecciona una sección para comenzar.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" id="load-btn" onclick="loadCurrentTab()">🔄 Cargar Contenido</button>
+        <button class="btn btn-secondary" onclick="clearContent()">✕ Limpiar</button>
+        <button class="btn btn-gold" id="banco-btn" onclick="loadBancoFromTopic()">📋 Banco de Preguntas</button>
+      </div>
+
+      <div class="custom-q">
+        <textarea id="custom-input" placeholder="Escribe aquí tu pregunta o ejercicio específico sobre este tema... Por ejemplo: 'Resuelve: |2x - 3| ≤ 7'" rows="2"></textarea>
+        <button class="btn btn-primary" onclick="askCustom()">Preguntar ✈</button>
+      </div>
+      <div class="error-msg" id="error-msg"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const UNITS = {
+  logica: { icon: '🔣', label: 'Lógica Matemática' },
+  conjuntos: { icon: '🔵', label: 'Conjuntos' },
+  reales: { icon: '🔢', label: 'Números Reales' },
+  funciones: { icon: '📈', label: 'Funciones Algebraicas' },
+  trigo: { icon: '📐', label: 'Trigonometría' },
+  explog: { icon: '📊', label: 'Función Exp. y Logarítmica' }
+};
+
+const TOPICS = {
+  'logica-proposiciones': 'Proposiciones y Conectivos Lógicos',
+  'logica-tautologia': 'Tautología, Contradicción y Contingencia',
+  'logica-leyes': 'Leyes del Álgebra Proposicional',
+  'conjuntos-definicion': 'Definición y Determinación de Conjuntos',
+  'conjuntos-relaciones': 'Relaciones entre Conjuntos',
+  'conjuntos-operaciones': 'Operaciones con Conjuntos',
+  'reales-axiomas': 'Axiomas del Cuerpo de los Números Reales',
+  'reales-sucesiones': 'Sucesiones, Progresiones Aritméticas y Geométricas',
+  'reales-intervalos': 'Axiomas de Orden e Intervalos',
+  'reales-valorabsoluto': 'Valor Absoluto',
+  'funciones-relacion': 'Relación y Función',
+  'funciones-biyectiva': 'Función Biyectiva e Inversa',
+  'funciones-tipos': 'Tipos de Funciones Algebraicas',
+  'funciones-operaciones': 'Operaciones con Funciones',
+  'funciones-monotonia': 'Monotonía de Funciones',
+  'funciones-paridad': 'Paridad de Funciones',
+  'trigo-angulos': 'Ángulo Trigonométrico y Razones Trigonométricas',
+  'trigo-circulo': 'Círculo Trigonométrico',
+  'trigo-funciones': 'Funciones Trigonométricas',
+  'trigo-identidades': 'Identidades Trigonométricas',
+  'trigo-triangulos': 'Resolución de Triángulos',
+  'trigo-inversas': 'Funciones Trigonométricas Inversas',
+  'trigo-ecuaciones': 'Ecuaciones e Inecuaciones Trigonométricas',
+  'explog-definicion': 'Función Exponencial y Logarítmica – Definición',
+  'explog-ecuaciones': 'Propiedades, Ecuaciones e Inecuaciones',
+};
+
+let currentUnit = '';
+let currentSub = '';
+let currentTab = 'teoria';
+let isLoading = false;
+
+// ── NAVIGATION ──────────────────────────────────────────
+function toggleUnit(idx) {
+  const sub = document.getElementById('sub-' + idx);
+  sub.classList.toggle('open');
+}
+
+function loadTopic(unit, sub) {
+  currentUnit = unit;
+  currentSub = sub;
+  currentTab = 'teoria';
+
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('topic-view').style.display = 'block';
+
+  const key = unit + '-' + sub;
+  document.getElementById('topic-title').textContent = TOPICS[key] || 'Tema';
+  document.getElementById('topic-sub').textContent = 'Unidad: ' + UNITS[unit].label;
+  document.getElementById('topic-icon').textContent = UNITS[unit].icon;
+
+  // Reset tabs
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', i === 0);
+  });
+
+  clearContent();
+  loadCurrentTab();
+
+  // Highlight sidebar
+  document.querySelectorAll('.nav-sub-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.includes(TOPICS[key]?.slice(0,15)));
+  });
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.includes({
+      teoria:'Teoría', ejemplos:'Ejemplos', errores:'Errores',
+      estrategia:'Estrategia', ejercicios:'Ejercicios', examen:'Tipo Examen'
+    }[tab]));
+  });
+  clearContent();
+  loadCurrentTab();
+}
+
+function loadBancoFromTopic() { loadBanco(currentUnit); }
+
+function loadBanco(unit) {
+  currentUnit = unit;
+  currentSub = 'banco';
+  currentTab = 'banco';
+
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('topic-view').style.display = 'block';
+  document.getElementById('topic-title').textContent = 'Banco de Preguntas – ' + UNITS[unit].label;
+  document.getElementById('topic-sub').textContent = 'Mínimo 30 preguntas · Estilo ESPE';
+  document.getElementById('topic-icon').textContent = '📋';
+
+  clearContent();
+  callAI(buildBancoPrompt(unit));
+}
+
+// ── CONTENT LOADING ──────────────────────────────────────
+function loadCurrentTab() {
+  if (!currentUnit) return;
+  const prompt = buildPrompt(currentUnit, currentSub, currentTab);
+  callAI(prompt);
+}
+
+function buildPrompt(unit, sub, tab) {
+  const topic = TOPICS[unit + '-' + sub] || 'este tema';
+  const unitLabel = UNITS[unit]?.label || unit;
+
+  const BASE = `Actúa como docente experto en Matemática y Álgebra preuniversitaria, 
+especializado en preparación para exámenes de ingreso a la ESPE (Escuela Politécnica del Ejército) 
+en Ecuador, área de Ciencias Económicas y Administrativas.
+El material está dirigido a Anabell, estudiante ecuatoriana que se prepara para rendir el examen de admisión.
+Usa lenguaje académico claro, ordenado, como si explicaras en clase.
+Unidad: ${unitLabel}. Tema específico: **${topic}**.`;
+
+  const TABS = {
+    teoria: `${BASE}
+Desarrolla la EXPLICACIÓN TEÓRICA COMPLETA del tema "${topic}":
+1. Introducción y contexto
+2. Definiciones clave (en **negrita**)
+3. Fórmulas y propiedades principales (usa notación matemática clara)
+4. Tabla comparativa si aplica
+Incluye recuadros marcados así:
+- 📌 **Recuerda:** [concepto clave]
+- 💡 **Definición:** [término]
+Sé exhaustivo. Mínimo 500 palabras.`,
+
+    ejemplos: `${BASE}
+Desarrolla mínimo 4 EJEMPLOS RESUELTOS PASO A PASO del tema "${topic}".
+Para cada ejemplo:
+- Título: **Ejemplo N: [descripción]**
+- Nivel de dificultad: [Básico / Medio / Alto]
+- Enunciado claro
+- Solución detallada paso a paso, numerando cada paso
+- Resultado final destacado
+Varía el nivel de dificultad de fácil a complejo.`,
+
+    errores: `${BASE}
+Desarrolla la sección de ERRORES COMUNES del tema "${topic}".
+Lista mínimo 5 errores frecuentes que cometen los estudiantes.
+Para cada error:
+- ⚠️ **Error:** [descripción del error]
+- ❌ **Lo incorrecto:** [ejemplo equivocado]
+- ✅ **Lo correcto:** [cómo hacerlo bien]
+- **Por qué ocurre:** [explicación]
+Al final, incluye una recomendación general para evitar errores en el examen.`,
+
+    estrategia: `${BASE}
+Desarrolla la sección ESTRATEGIA RÁPIDA PARA EXAMEN del tema "${topic}".
+Incluye:
+1. 🎯 Pasos rápidos para resolver ejercicios de este tema en examen
+2. ⏱️ Truco de tiempo: cómo identificar el tipo de problema en segundos
+3. 🔑 Las 3-5 fórmulas o propiedades que NUNCA debes olvidar
+4. 📊 Tabla de identificación rápida: [Situación] → [Método a aplicar]
+5. Consejos específicos para preguntas de selección múltiple
+Enfocado en rapidez y seguridad para el examen ESPE.`,
+
+    ejercicios: `${BASE}
+Proporciona 8 EJERCICIOS DE PRÁCTICA del tema "${topic}".
+- 3 de nivel básico-medio
+- 3 de nivel alto  
+- 2 de nivel complejo
+Para cada ejercicio:
+**Ejercicio N:** [enunciado]
+*Solución:* [desarrolla la solución paso a paso]
+*Respuesta:* [resultado final]
+Incluye problemas contextualizados (economía, administración, situaciones reales) cuando sea posible.`,
+
+    examen: `${BASE}
+Crea 10 PREGUNTAS TIPO EXAMEN de selección múltiple del tema "${topic}".
+Estilo examen de admisión ESPE Ecuador.
+Formato OBLIGATORIO para cada pregunta:
+
+**Pregunta N.** [Enunciado claro]
+A) [Opción]
+B) [Opción]
+C) [Opción] ✅
+D) [Opción]
+**Respuesta correcta: [letra]**
+*Explicación:* [Breve explicación del procedimiento]
+
+Distribución: 3 nivel medio, 4 nivel alto, 3 nivel complejo.
+Solo UNA respuesta correcta por pregunta. Marca con ✅ la correcta.`
+  };
+
+  return TABS[tab] || TABS.teoria;
+}
+
+function buildBancoPrompt(unit) {
+  const unitLabel = UNITS[unit]?.label || unit;
+  return `Actúa como docente experto en preparación para exámenes de ingreso a la ESPE Ecuador.
+Crea un BANCO COMPLETO DE 30 PREGUNTAS de selección múltiple sobre toda la unidad de "${unitLabel}".
+El banco está diseñado para Anabell, estudiante que prepara el examen de admisión ESPE, área Ciencias Económicas.
+
+Distribución:
+- 9 preguntas nivel medio (30%)
+- 12 preguntas nivel alto (40%)
+- 9 preguntas nivel complejo (30%)
+
+Formato OBLIGATORIO para CADA pregunta:
+
+**Pregunta N.** [Enunciado completo y claro]
+A) [Opción]
+B) [Opción]
+C) [Opción]
+D) [Opción]
+**Respuesta correcta: [letra]** ✅
+*Explicación:* [Explica el procedimiento brevemente]
+
+---
+
+Instrucciones adicionales:
+- Solo una respuesta correcta por pregunta
+- Evitar preguntas demasiado básicas
+- Incluir contextos de economía/administración cuando aplique
+- Cubrir todos los subtemas de la unidad
+- Preguntas de razonamiento, análisis y resolución rápida
+- Estilo similar a exámenes ESPE reales`;
+}
+
+// ── API CALL ─────────────────────────────────────────────
+async function callAI(prompt) {
+  if (isLoading) return;
+  isLoading = true;
+
+  const area = document.getElementById('ai-area');
+  const content = document.getElementById('ai-content');
+  const loadBar = document.getElementById('loading-bar');
+  const errMsg = document.getElementById('error-msg');
+  const btn = document.getElementById('load-btn');
+
+  area.classList.add('loading');
+  loadBar.classList.add('show');
+  errMsg.textContent = '';
+  content.innerHTML = '';
+  if (btn) btn.disabled = true;
+
+  const msgs = [
+    'Consultando al docente IA...',
+    'Elaborando explicaciones académicas...',
+    'Preparando ejemplos y ejercicios...',
+    'Finalizando el contenido...'
+  ];
+  let mi = 0;
+  const loadingMsg = document.getElementById('loading-msg');
+  const interval = setInterval(() => {
+    mi = (mi + 1) % msgs.length;
+    loadingMsg.textContent = msgs[mi];
+  }, 2000);
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!resp.ok) throw new Error('Error de API: ' + resp.status);
+    const data = await resp.json();
+    const raw = data.content?.map(b => b.text || '').join('') || '';
+    content.innerHTML = renderMarkdown(raw);
+
+  } catch (e) {
+    content.innerHTML = `<div class="state-msg"><div class="icon">⚠️</div><p>Error al cargar el contenido. Verifica la conexión y vuelve a intentar.</p></div>`;
+    errMsg.textContent = e.message;
+  } finally {
+    clearInterval(interval);
+    isLoading = false;
+    area.classList.remove('loading');
+    loadBar.classList.remove('show');
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ── CUSTOM QUESTION ──────────────────────────────────────
+async function askCustom() {
+  const inp = document.getElementById('custom-input');
+  const q = inp.value.trim();
+  if (!q) return;
+
+  const topic = TOPICS[currentUnit + '-' + currentSub] || 'Álgebra';
+  const prompt = `Actúa como docente experto en Álgebra preuniversitaria para el ingreso a la ESPE Ecuador.
+El estudiante tiene una pregunta específica sobre el tema "${topic}".
+
+Pregunta del estudiante: "${q}"
+
+Responde de forma clara, detallada y paso a paso, como si lo explicaras en clase.
+Si es un ejercicio, resuélvelo completamente con todos los pasos.
+Si es una duda teórica, explica el concepto con ejemplos.`;
+
+  inp.value = '';
+  callAI(prompt);
+}
+
+// ── MARKDOWN RENDERER ────────────────────────────────────
+function renderMarkdown(md) {
+  let html = md
+    // Headers
+    .replace(/^#### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    // Bold
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    // Italic
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Inline code
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    // Horizontal rule
+    .replace(/^---$/gm, '<hr style="border-color:var(--borde);margin:1rem 0;">')
+    // Checkmark
+    .replace(/✅/g, '<span class="checkmark">✅</span>')
+    // Unordered list
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$1</ul>')
+    // Ordered list
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+    // Paragraphs
+    .split('\n\n')
+    .map(block => {
+      block = block.trim();
+      if (!block) return '';
+      if (block.startsWith('<h') || block.startsWith('<ul') || block.startsWith('<ol') || block.startsWith('<hr')) return block;
+      if (block.includes('<li>')) return '<ul>' + block + '</ul>';
+      return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+    })
+    .join('\n');
+
+  // Special boxes
+  html = html.replace(/<p>📌 <strong>Recuerda:<\/strong>(.+?)<\/p>/gs,
+    '<div class="box-recuerda">$1</div>');
+  html = html.replace(/<p>⚠️ <strong>Error[^<]*<\/strong>(.+?)<\/p>/gs,
+    '<div class="box-error">$1</div>');
+  html = html.replace(/<p>🎯 <strong>[^<]*<\/strong>(.+?)<\/p>/gs,
+    '<div class="box-estrategia">$1</div>');
+
+  return html;
+}
+
+function clearContent() {
+  document.getElementById('ai-content').innerHTML = `
+    <div class="state-msg">
+      <div class="icon">🤖</div>
+      <p>Haz clic en <strong>Cargar Contenido</strong> para generar el material académico.</p>
+    </div>`;
+  document.getElementById('error-msg').textContent = '';
+}
+
+// Enter key in textarea
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('custom-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      askCustom();
+    }
+  });
+});
+</script>
+</body>
+</html>
